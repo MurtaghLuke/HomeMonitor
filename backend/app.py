@@ -34,7 +34,7 @@ def health():
     return jsonify({"status": "ok"})
 
 
-# json POST request recieved from device and saves the reading to mongo
+# json POST request recieved from device and saves the reading to mongo. Used ChatGPT
 @app.route("/api/readings", methods=["POST"])
 def create_reading():
     data = request.get_json(force=True) or {}
@@ -61,7 +61,7 @@ def create_reading():
 
 
 
-# get latest reading from mongodb
+# get latest reading from mongodb. Used ChatGPT
 @app.route("/api/readings/latest", methods=["GET"])
 def latest_reading():
     saved = col.find_one(sort=[("_id", DESCENDING)])
@@ -76,7 +76,7 @@ def latest_reading():
 
 
 
-# index.html webpage route
+# index.html webpage route. Used ChatGPT
 @app.route("/")
 def index():
     p = pathlib.Path(app.static_folder) / "index.html"
