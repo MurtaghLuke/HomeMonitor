@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify, send_from_directory
-from datetime import datetime, timezone
+from datetime import datetime, timezone 
 from pymongo import MongoClient, DESCENDING
 from dotenv import load_dotenv
 import os, pathlib
 
+
+# load in .env values
+load_dotenv()
+MONGO_URL = os.getenv("MONGO_URL")
+DB_NAME = os.getenv("DB_NAME", "smarthome")
+COLLECTION = os.getenv("COLLECTION", "readings")
 
 
 #//  connect to mongo db
