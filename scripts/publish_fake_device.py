@@ -1,9 +1,12 @@
+#backend testing.
+
+
+
 import os, random, time
 from dotenv import load_dotenv
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
-
-load_dotenv()
+load_dotenv() 
 
 pnconf = PNConfiguration()
 pnconf.publish_key = os.getenv("PUB_KEY")
