@@ -9,6 +9,8 @@ from pubnub.pubnub import PubNub
 from pubnub.callbacks import SubscribeCallback
 from pymongo import MongoClient
 from datetime import datetime, timezone
+from pubnub.crypto import AesCbcCryptoModule
+
 
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL")
@@ -17,14 +19,19 @@ COLL      = os.getenv("COLLECTION","readings")
 PUB_KEY   = os.getenv("PUB_KEY")
 SUB_KEY   = os.getenv("SUB_KEY")
 CHANNEL   = os.getenv("CHANNEL","pi.home.demo")
+CIPHER_KEY = os.getenv("CIPHER_KEY")
+PN_SERVER_TOKEN = os.getenv("PN_SERVER_TOKEN")
 
 client = MongoClient(MONGO_URL)
 col = client[DB_NAME][COLL]
 
+
 pnconf = PNConfiguration()
 pnconf.publish_key = PUB_KEY
 pnconf.subscribe_key = SUB_KEY
-pnconf.uuid = "server-subscriber-1" 
+pnconf.user_id = "server-subscriber-1" 
+pnconf.cipher_key = CIPHER_KEY
+pnconf.crypto_module = AesCbcCryptoModule(pnconf)
 pubnub = PubNub(pnconf)
 
 class Listener(SubscribeCallback):
@@ -39,6 +46,12 @@ class Listener(SubscribeCallback):
                         "value": float(value)})
 
 if __name__ == "__main__":
+    if PN_SERVER_TOKEN:
+        pubnub.set_token(PN_SERVER_TOKEN)
+    else:
+        raise SystemExit("Missing PN_SERVER_TOKEN in .env. Cannot subscribe with PAM enabled.")
+
+
     pubnub.add_listener(Listener())
     pubnub.subscribe().channels(CHANNEL).execute()
     # keep process alive
