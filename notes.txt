@@ -1,0 +1,3 @@
+access manager (enabled revoke v3 token)
+
+hide keys in .env.example
