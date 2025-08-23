@@ -10,12 +10,14 @@ load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL")
 DB_NAME = os.getenv("DB_NAME", "smarthome")
 COLLECTION = os.getenv("COLLECTION", "readings")
+API_INGEST_KEY = os.getenv("API_INGEST_KEY")
 
 
 #//  connect to mongo db
 client = MongoClient(MONGO_URL)
 db = client[DB_NAME]
 col = db[COLLECTION]
+col.create_index([("ts", DESCENDING)])
 
 # create flask app
 app = Flask(
@@ -37,12 +39,18 @@ def health():
 # json POST request recieved from device and saves the reading to mongo. Used ChatGPT
 @app.route("/api/readings", methods=["POST"])
 def create_reading():
+    
+    if API_INGEST_KEY and request.headers.get("X-API-Key") != API_INGEST_KEY:
+        return jsonify({"detail": "unauthorized"}), 401
+    
     data = request.get_json(force=True) or {}
     sensor = data.get("sensor")
     value = data.get("value")
 
     if sensor is None or value is None:
         return jsonify({"detail": "sensor and value required"}), 400
+
+
 
     doc = {
         "ts": datetime.now(timezone.utc),
@@ -57,14 +65,15 @@ def create_reading():
         "ts": saved["ts"].isoformat(),
         "sensor": saved["sensor"],
         "value": saved["value"]
-    })
+    }), 201
+
 
 
 
 # get latest reading from mongodb. Used ChatGPT
 @app.route("/api/readings/latest", methods=["GET"])
 def latest_reading():
-    saved = col.find_one(sort=[("_id", DESCENDING)])
+    saved = col.find_one(sort=[("ts", DESCENDING)])
     if not saved:
         return jsonify({"detail": "No readings yet"}), 404
     return jsonify({
@@ -74,6 +83,20 @@ def latest_reading():
         "value": saved["value"]
     })
 
+@app.route("/api/readings", methods=["GET"])
+def list_readings():
+    try:
+        limit = min(int(request.args.get("limit", 20)), 200)
+    except:
+        limit = 20
+    docs = col.find().sort("ts", DESCENDING).limit(limit)
+    out = [{
+        "id": str(d["_id"]),
+        "ts": d["ts"].isoformat(),
+        "sensor": d["sensor"],
+        "value": d["value"]
+    } for d in docs]
+    return jsonify(out)
 
 
 # index.html webpage route. Used ChatGPT

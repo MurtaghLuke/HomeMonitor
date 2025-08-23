@@ -1,3 +1,5 @@
 access manager (enabled revoke v3 token)
 
 hide keys in .env.example
+
+encryption at rest(mongo db)
