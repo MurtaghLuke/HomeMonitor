@@ -1,16 +1,25 @@
 from flask import Flask, request, jsonify, send_from_directory
-from datetime import datetime, timezone 
+from datetime import datetime, timezone
 from pymongo import MongoClient, DESCENDING
 from dotenv import load_dotenv
 import os, pathlib
+from pathlib import Path
 
+#load env from backend folder
+load_dotenv(dotenv_path=Path(__file__).with_name(".env"))
 
 # load in .env values
-load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL")
 DB_NAME = os.getenv("DB_NAME", "smarthome")
 COLLECTION = os.getenv("COLLECTION", "readings")
 API_INGEST_KEY = os.getenv("API_INGEST_KEY")
+
+
+# Fail if DB url is missing(helps debugging) (chatgpt)
+if not MONGO_URL:
+    raise RuntimeError("MONGO_URL is not set. Put it in backend/.env")
+
+
 
 
 #//  connect to mongo db
@@ -18,6 +27,9 @@ client = MongoClient(MONGO_URL)
 db = client[DB_NAME]
 col = db[COLLECTION]
 col.create_index([("ts", DESCENDING)])
+
+
+
 
 # create flask app
 app = Flask(
