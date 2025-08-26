@@ -35,7 +35,7 @@ def token_for_device():
     envelope =(pubnub.grant_token() # call for pi
                 .channels([Channel.id("pi.home.luke").write()]) # token will only allow writing to this channel
                 .authorized_uuid(device_uuid) # token only works if clients user_id matches this uuid
-                .ttl(60)  #token expires in 60 mins
+                .ttl(336)  #token expires in 60 mins
                 .sync()) # runs request and waits till pubnub responds before continuing.
     if envelope.status.is_error():
         abort(500, envelope.status.error_data.information)
@@ -53,7 +53,7 @@ def token_for_server():
                     Channel.id("ui.home.luke").write()# lets server write updates to ui
                 ])
                 .authorized_uuid("server-api") # only works if clients user id is "server-api"
-                .ttl(60)
+                .ttl(336)
                 .sync())
     if envelope.status.is_error():
         abort(500, envelope.status.error_data.information)

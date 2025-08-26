@@ -4,13 +4,24 @@
 
 import os, random, time
 from dotenv import load_dotenv
+from pathlib import Path
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from pubnub.crypto import AesCbcCryptoModule
-load_dotenv() 
+load_dotenv(Path(__file__).resolve().parent.parent / "backend" / ".env")
 
-CIPHER_KEY = os.getenv("CIPHER_KEY")
-PN_DEVICE_TOKEN = os.getenv("PN_DEVICE_TOKEN")
+
+def require(name):
+    v = os.getenv(name)
+    if not v:
+        raise SystemExit(f"Missing {name} in .env. Add it and re-run.")
+    return v
+
+CIPHER_KEY      = require("CIPHER_KEY")
+PN_DEVICE_TOKEN = require("PN_DEVICE_TOKEN")
+PUB_KEY         = require("PUB_KEY")
+SUB_KEY         = require("SUB_KEY")
+CHANNEL         = os.getenv("CHANNEL", "pi.home.demo")
 
 pnconf = PNConfiguration()
 pnconf.publish_key = os.getenv("PUB_KEY")
@@ -19,7 +30,6 @@ pnconf.user_id = "my-device-1"
 pnconf.cipher_key = CIPHER_KEY
 pnconf.crypto_module = AesCbcCryptoModule(pnconf)
 pubnub = PubNub(pnconf)
-CHANNEL = os.getenv("CHANNEL", "pi.home.demo")
 
 #BELOW MADE WITH CHATGPT 
 def send_once():

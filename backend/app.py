@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify, send_from_directory
 from datetime import datetime, timezone
 from pymongo import MongoClient, DESCENDING
 from dotenv import load_dotenv
-import os, pathlib
+
 from pathlib import Path
+import os, pathlib
+from app_security import bp as security_bp
+
 
 #load env from backend folder
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"))
@@ -35,11 +38,11 @@ col.create_index([("ts", DESCENDING)])
 app = Flask(
     __name__,
     static_folder="../web",      #  serves index.html
-    static_url_path="/"          # serves the web folder
+    static_url_path="/static"    # serves the web folder
 )
 
 
-
+app.register_blueprint(security_bp) # register blueprint so /api/token/ routes exist
 
 
 #health check to see if server is running.
@@ -121,6 +124,7 @@ def index():
 
 # can run locally
 if __name__ == "__main__":
+    print(app.url_map)
     app.run(host="127.0.0.1", port=8000, debug=False, use_reloader=False, threaded=False)
 
 

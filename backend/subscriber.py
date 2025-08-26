@@ -3,6 +3,7 @@
 
 
 import os
+import requests
 from dotenv import load_dotenv
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
@@ -29,7 +30,7 @@ col = client[DB_NAME][COLL]
 pnconf = PNConfiguration()
 pnconf.publish_key = PUB_KEY
 pnconf.subscribe_key = SUB_KEY
-pnconf.user_id = "server-subscriber-1" 
+pnconf.user_id = "server-api" 
 pnconf.cipher_key = CIPHER_KEY
 pnconf.crypto_module = AesCbcCryptoModule(pnconf)
 pubnub = PubNub(pnconf)

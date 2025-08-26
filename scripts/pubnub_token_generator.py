@@ -30,7 +30,7 @@ if __name__ == "__main__":
     server_env = (pn.grant_token()
                     .channels([Channel.pattern("pi.home.*").read()])
                     .authorized_uuid("server-subscriber-1")
-                    .ttl(60)   # expires in 60mins
+                    .ttl(336)   # expires in 60mins
                     .sync())
 
     if server_env.status.is_error():
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     device_env = (pn.grant_token()
                     .channels([Channel.id(chan).write()])
                     .authorized_uuid("my-device-1")
-                    .ttl(60)
+                    .ttl(336)
                     .sync())
 
     if device_env.status.is_error():
