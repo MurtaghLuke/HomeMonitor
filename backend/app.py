@@ -4,12 +4,12 @@ from pymongo import MongoClient, DESCENDING
 from dotenv import load_dotenv
 from pathlib import Path
 import os, pathlib
-from app_security import bp as security_bp
+from .app_security import bp as security_bp
 from flask_cors import CORS
 
 
 #load env from backend folder
-load_dotenv(dotenv_path=Path(__file__).with_name(".env"))
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
 FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "https://homemonitor.click") #CORS suggested by chatgpt. lets browser call endpoints safely.
 
 
