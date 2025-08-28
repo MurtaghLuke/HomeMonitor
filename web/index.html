@@ -4,41 +4,99 @@
   <meta charset="utf-8" />
   <title>Home Monitor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- new styles made with chatgpt -->
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 0; background:#f6f7fb; color:#0f172a; }
-    .wrap { max-width: 900px; margin: 24px auto; padding: 0 16px; }
-    h1 { margin: 0 0 12px; font-size: 28px; }
-    .muted { color:#64748b; font-size: 14px; margin-bottom: 16px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; }
-    .card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 6px 18px rgba(0,0,0,.06); }
-    .title { font-size: 13px; color:#475569; margin-bottom: 6px; }
-    .value { font-size: 28px; font-weight: 700; }
-    .sub { color:#64748b; font-size: 12px; margin-top: 4px; }
+    :root{
+      --bg:#f6f7fb;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --card:#ffffff;
+      --ring:#e2e8f0;
+      --accent:#0ea5e9;
+      --good:#059669;
+      --warn:#d97706;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; 
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink); 
+      background:var(--bg);
+    }
+    .wrap{max-width: 1000px; margin: 32px auto; padding: 0 20px;}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px;}
+    h1{margin:0; font-size: 28px; letter-spacing:.3px}
+    .status{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px}
+    .dot{width:10px; height:10px; border-radius:50%; background: var(--good)}
+    .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:18px}
+    .card{
+      background:var(--card); border:1px solid var(--ring); border-radius:16px; padding:18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+    .title{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; text-transform:uppercase}
+    .value{font-size:36px; font-weight:700; line-height:1.2; margin-top:6px}
+    .sub{color:var(--muted); font-size:12px; margin-top:6px}
+    .icon{width:22px; height:22px; color: var(--accent)}
+    footer{margin-top:20px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px}
+    .badge{padding:4px 10px; border-radius:999px; border:1px solid var(--ring); background:#f9fafb}
+    .warn{border-color:#f59e0b33; background:#fef3c7; color:var(--warn)}
+    .ok{border-color:#10b98133; background:#d1fae5; color:var(--good)}
   </style>
+  <script src="https://kit.fontawesome.com/a2e0ad0f3b.js" crossorigin="anonymous"></script>
+
+
 </head>
+
 <body>
   <div class="wrap">
-    <h1>Home Monitor</h1>
-    <div id="health" class="muted">Checking server…</div>
+    <header>
+      <h1>Home Monitor</h1>
+      <div class="status">
+        <span class="dot"></span>
+        <span id="health">Checking server…</span>
+      </div>
+    </header>
 
     <div class="grid">
       <div class="card">
-        <div class="title">Temperature</div>
+        <div class="title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 14.76V5a2 2 0 10-4 0v9.76a4 4 0 104 0z"/></svg>
+          <span>Temperature</span>
+        </div>
         <div id="tempVal" class="value">--</div>
         <div id="tempTs" class="sub">--</div>
       </div>
+
       <div class="card">
-        <div class="title">Humidity</div>
+        <div class="title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2s7 7.16 7 12a7 7 0 11-14 0C5 9.16 12 2 12 2z"/></svg>
+          <span>Humidity</span>
+        </div>
         <div id="humVal" class="value">--</div>
         <div id="humTs" class="sub">--</div>
       </div>
+
       <div class="card">
-        <div class="title">Motion</div>
+        <div class="title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 20a8 8 0 100-16 8 8 0 000 16z"/><path d="M12 12l4-4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M12 2v2"/><path d="M12 20v2"/>
+          </svg>
+          <span>Motion</span>
+        </div>
         <div id="motionVal" class="value">--</div>
         <div id="motionTs" class="sub">--</div>
       </div>
     </div>
+
+    <footer>
+      <span class="badge">Auto-refreshing every 3s</span>
+      <span id="statusBadge" class="badge ok">Live</span>
+    </footer>
   </div>
+
+
 
 
   <!-- New js sensor functions. Made with ChatGPT -->
